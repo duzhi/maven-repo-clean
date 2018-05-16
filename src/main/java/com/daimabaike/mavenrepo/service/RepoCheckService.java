@@ -2,6 +2,7 @@ package com.daimabaike.mavenrepo.service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,6 +44,12 @@ public class RepoCheckService {
 			.asList(new String[] { REMOTE_REPO, M2E_LASTUPDATEED_PROPERTIES, JAR_SUFFIX, JAR_SHA1_SUFFIX, POM_SUFFIX,
 					POM_SHA1_SUFFIX, SOURCES_SUFFIX, SOURCES_SHA1_SUFFIX });
 
+	private final List<String> errorPaths = new ArrayList<String>();
+
+	public List<String> getErrorPaths() {
+		return errorPaths;
+	}
+
 	// 判断是否是Jar目录，存储有文件的就认为是Jar目录
 	public boolean isJarDir(File file) {
 
@@ -67,24 +74,14 @@ public class RepoCheckService {
 		String dirPath = file.getAbsolutePath() + File.separatorChar;
 
 		// // REMOTE_REPO 必须存在
-		 File repo = new File(dirPath + REMOTE_REPO);
-		 if(!repo.exists()) {
-		 logger.error(file.getAbsolutePath() +", repo not exist");
-		 }
+		File repo = new File(dirPath + REMOTE_REPO);
+		if (!repo.exists()) {
+			errorPaths.add(file.getAbsolutePath() + File.separatorChar);
+			logger.error("repo not exist:\r\n" + file.getAbsolutePath() + File.separatorChar);
+		}
 
 		// REMOTE_REPO、POM必须存在
 		String filePrefix = file.getParentFile().getName() + "-" + file.getName();
-//
-//		Set<String> files = new HashSet<String>(Arrays.asList(file.list()));
-//		for (String str : FILES_MUST_EXIST) {
-//			if (!str.equals(REMOTE_REPO)) {
-//				str = filePrefix + str;
-//			}
-//			if (!files.contains(str)) {
-//				logger.info("less file:" + dirPath + str);
-//				return false;
-//			}
-//		}
 
 		// POM
 		boolean pom = DigestUtils.isSignSHA1Valid(dirPath + filePrefix + POM_SUFFIX,
@@ -98,8 +95,8 @@ public class RepoCheckService {
 
 		boolean result = pom && jar && sources;
 		if (!result) {
-			logger.info("exists error file:" + dirPath);
-			
+			errorPaths.add(dirPath);
+			logger.info("exists error file:\r\n" + dirPath);
 		}
 		return result;
 

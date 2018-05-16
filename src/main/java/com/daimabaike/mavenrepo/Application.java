@@ -30,14 +30,24 @@ public class Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		logger.info("");
-		logger.info("------------ start------------------");
+		logger.info("------------ start--------------");
 		logger.info("");
 		File repoRoot = new File(FILE_PATH);
 
 		work(repoRoot);
 		logger.info("");
-		logger.info("------------ end------------------");
+		if(repoCheckService.getErrorPaths().isEmpty()) {
+			logger.info("---------- no error file ------------");
+		} else {
+			logger.info("---------- del errorPaths cmd ------------");
+			for(String path : repoCheckService.getErrorPaths()) {
+				System.out.println("rd/s/q " + path);
+			}
+		}
+		logger.info("------------ end----------------");
 		logger.info("");
+		
+		
 	}
 
 	public void work(File file) {
