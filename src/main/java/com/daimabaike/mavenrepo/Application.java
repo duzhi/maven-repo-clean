@@ -1,3 +1,6 @@
+/*
+ * www.daimabaike.com
+ */
 package com.daimabaike.mavenrepo;
 
 import java.io.File;
@@ -12,7 +15,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.daimabaike.mavenrepo.service.RepoCheckService;
-
+/**
+ * @author duzhi
+ */
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
